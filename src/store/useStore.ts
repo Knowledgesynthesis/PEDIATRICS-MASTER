@@ -46,19 +46,9 @@ export interface AssessmentQuestion {
   category: string
 }
 
-export interface UserProgress {
-  completedModules: string[]
-  assessmentScores: Record<string, number>
-  bookmarks: string[]
-}
-
 interface AppState {
   darkMode: boolean
   toggleDarkMode: () => void
-  userProgress: UserProgress
-  updateProgress: (progress: Partial<UserProgress>) => void
-  bookmarkItem: (itemId: string) => void
-  removeBookmark: (itemId: string) => void
 }
 
 export const useStore = create<AppState>()(
@@ -66,29 +56,6 @@ export const useStore = create<AppState>()(
     (set) => ({
       darkMode: true,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-      userProgress: {
-        completedModules: [],
-        assessmentScores: {},
-        bookmarks: [],
-      },
-      updateProgress: (progress) =>
-        set((state) => ({
-          userProgress: { ...state.userProgress, ...progress },
-        })),
-      bookmarkItem: (itemId) =>
-        set((state) => ({
-          userProgress: {
-            ...state.userProgress,
-            bookmarks: [...state.userProgress.bookmarks, itemId],
-          },
-        })),
-      removeBookmark: (itemId) =>
-        set((state) => ({
-          userProgress: {
-            ...state.userProgress,
-            bookmarks: state.userProgress.bookmarks.filter((id) => id !== itemId),
-          },
-        })),
     }),
     {
       name: 'pediatrics-master-storage',

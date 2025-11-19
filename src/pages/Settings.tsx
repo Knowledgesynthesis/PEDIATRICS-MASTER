@@ -1,32 +1,10 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { useStore } from '@/store/useStore'
-import { Moon, Sun, Trash2, Download, Info } from 'lucide-react'
+import { Moon, Sun, Info } from 'lucide-react'
 
 export default function Settings() {
-  const { darkMode, toggleDarkMode, userProgress, updateProgress } = useStore()
-
-  const handleClearProgress = () => {
-    if (window.confirm('Are you sure you want to clear all your progress? This cannot be undone.')) {
-      updateProgress({
-        completedModules: [],
-        assessmentScores: {},
-        bookmarks: [],
-      })
-    }
-  }
-
-  const handleExportData = () => {
-    const data = JSON.stringify(userProgress, null, 2)
-    const blob = new Blob([data], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'pediatrics-master-progress.json'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const { darkMode, toggleDarkMode } = useStore()
 
   return (
     <div className="space-y-8">
@@ -61,95 +39,6 @@ export default function Settings() {
             </div>
             <Button onClick={toggleDarkMode} variant="outline">
               {darkMode ? 'Switch to Light' : 'Switch to Dark'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Progress */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Progress</CardTitle>
-          <CardDescription>
-            Track your learning journey
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-accent p-4 rounded-lg">
-              <div className="text-2xl font-bold text-primary">
-                {userProgress.completedModules.length}
-              </div>
-              <div className="text-sm text-muted-foreground">Modules Completed</div>
-            </div>
-            <div className="bg-accent p-4 rounded-lg">
-              <div className="text-2xl font-bold text-primary">
-                {Object.keys(userProgress.assessmentScores).length}
-              </div>
-              <div className="text-sm text-muted-foreground">Assessments Taken</div>
-            </div>
-            <div className="bg-accent p-4 rounded-lg">
-              <div className="text-2xl font-bold text-primary">
-                {userProgress.bookmarks.length}
-              </div>
-              <div className="text-sm text-muted-foreground">Bookmarks</div>
-            </div>
-          </div>
-
-          {Object.keys(userProgress.assessmentScores).length > 0 && (
-            <div>
-              <h3 className="font-semibold mb-3">Assessment Scores</h3>
-              <div className="space-y-2">
-                {Object.entries(userProgress.assessmentScores).map(([category, score]) => (
-                  <div key={category} className="flex items-center justify-between p-3 bg-accent rounded">
-                    <span className="text-sm capitalize">{category.replace('-', ' ')}</span>
-                    <Badge variant={score >= 80 ? 'success' : score >= 60 ? 'warning' : 'destructive'}>
-                      {score}%
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Data Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Data Management</CardTitle>
-          <CardDescription>
-            Export or clear your learning data
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b">
-            <div className="flex items-center gap-3">
-              <Download className="h-5 w-5" />
-              <div>
-                <div className="font-semibold">Export Data</div>
-                <div className="text-sm text-muted-foreground">
-                  Download your progress as JSON
-                </div>
-              </div>
-            </div>
-            <Button onClick={handleExportData} variant="outline">
-              Export
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Trash2 className="h-5 w-5 text-destructive" />
-              <div>
-                <div className="font-semibold">Clear All Progress</div>
-                <div className="text-sm text-muted-foreground">
-                  Reset all learning data and scores
-                </div>
-              </div>
-            </div>
-            <Button onClick={handleClearProgress} variant="destructive">
-              Clear Data
             </Button>
           </div>
         </CardContent>
