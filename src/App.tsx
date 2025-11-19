@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { useStore } from './store/useStore'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Development from './pages/Development'
@@ -14,6 +16,17 @@ import Glossary from './pages/Glossary'
 import Settings from './pages/Settings'
 
 function App() {
+  const darkMode = useStore((state) => state.darkMode)
+
+  useEffect(() => {
+    // Apply dark mode class to HTML element
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
+
   return (
     <Router>
       <Layout>
