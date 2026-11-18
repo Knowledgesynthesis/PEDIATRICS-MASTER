@@ -2,14 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Interactive pediatric learning platform - Master pediatric development, vaccines, infections, and acute care" />
-    <meta name="theme-color" content="#0f172a" />
-    <title>Pediatrics Master - Interactive Pediatric Education</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Pediatrics Master — evidence-based pediatrics</title>
+    <meta
+      name="description"
+      content="Evidence-based pediatrics in nine interactive modules: growth, development, immunizations, newborn, infections, fever, fluids, febrile seizures and emergencies — with bedside tools, cases and a question bank."
+    />
+    <meta name="theme-color" content="#0b1220" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+      try {
+        var saved = JSON.parse(localStorage.getItem('pediatrics-master-storage') || '{}')
+        var dark = saved && saved.state && typeof saved.state.darkMode === 'boolean' ? saved.state.darkMode : true
+        if (dark) document.documentElement.classList.add('dark')
+      } catch (e) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>Pediatrics Master needs JavaScript enabled.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

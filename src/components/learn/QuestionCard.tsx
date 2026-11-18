@@ -3,20 +3,8 @@ import { CheckCircle2, XCircle } from 'lucide-react'
 import type { Question } from '@/types'
 import { useSession } from '@/store/useStore'
 import { cn } from '@/lib/utils'
+import { shuffledOrder } from '@/lib/shuffle'
 import { Cite } from './Cite'
-
-/** Deterministic shuffle so options don't always sit in authoring order (seeded by question id). */
-function shuffledOrder(id: string, n: number): number[] {
-  let seed = 0
-  for (const ch of id) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0
-  const order = Array.from({ length: n }, (_, i) => i)
-  for (let i = n - 1; i > 0; i--) {
-    seed = (seed * 1664525 + 1013904223) >>> 0
-    const j = seed % (i + 1)
-    ;[order[i], order[j]] = [order[j], order[i]]
-  }
-  return order
-}
 
 const LETTERS = 'ABCDEFG'
 

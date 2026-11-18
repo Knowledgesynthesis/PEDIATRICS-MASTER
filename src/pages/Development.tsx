@@ -162,11 +162,16 @@ function MotorWindows() {
           </div>
         </div>
       </div>
+      <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-4 rounded-sm bg-primary/40" aria-hidden /> normal window (1st–99th percentile)</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-2.5 w-4 rounded-sm bg-rose-500/50" aria-hidden /> window closed at this age</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block h-3 w-0.5 bg-foreground" aria-hidden /> median</span>
+      </p>
       <p className="text-sm" role="status">
         {overdue.length === 0
-          ? `At ${age} months, every milestone shown is still within the normal window.`
-          : `At ${age} months, a child who cannot yet ${overdue.map((w) => w.label.toLowerCase()).join(', ')} is beyond the 99th percentile → refer for evaluation.`}
-        {' '}Note that ≈4% of healthy children never crawl on hands and knees.
+          ? `At ${age} months, every milestone shown is still within its normal window.`
+          : `At ${age} months, the window has closed for: ${overdue.map((w) => w.label.toLowerCase()).join('; ')}. A child who has not achieved one of these is beyond the 99th percentile → refer for evaluation.`}
+        {' '}Hands-and-knees crawling is the exception: ≈4% of healthy children never do it.
       </p>
     </ToolFrame>
   )
