@@ -1,64 +1,31 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export interface Milestone {
-  id: string
-  age: number // in months
-  domain: 'gross-motor' | 'fine-motor' | 'language' | 'social'
-  description: string
-  redFlag?: boolean
-}
-
-export interface Vaccine {
-  id: string
-  name: string
-  ages: number[] // in months
-  contraindications?: string[]
-  notes?: string
-}
-
-export interface Infection {
-  id: string
-  name: string
-  ageGroup: string
-  diagnosis: string[]
-  management: string[]
-  redFlags: string[]
-  notes?: string
-}
-
-export interface CongenitalCondition {
-  id: string
-  name: string
-  category: 'cardiac' | 'genetic' | 'metabolic' | 'infection'
-  features: string[]
-  diagnosis: string[]
-  management: string[]
-}
-
-export interface AssessmentQuestion {
-  id: string
-  type: 'mcq' | 'matching' | 'case'
-  question: string
-  options?: string[]
-  correctAnswer: string | number
-  rationale: string
-  category: string
-}
-
-interface AppState {
+/** Persisted UI preference only (theme). Learning progress is intentionally not stored. */
+interface PreferencesState {
   darkMode: boolean
   toggleDarkMode: () => void
 }
 
-export const useStore = create<AppState>()(
+export const useStore = create<PreferencesState>()(
   persist(
     (set) => ({
       darkMode: true,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
     }),
-    {
-      name: 'pediatrics-master-storage',
-    }
-  )
+    { name: 'pediatrics-master-storage' },
+  ),
 )
+
+/** In-memory answers for the current session (cleared on reload). Drives "review missed". */
+interface SessionState {
+  answers: Record<string, boolean>
+  record: (questionId: string, correct: boolean) => void
+  reset: () => void
+}
+
+export const useSession = create<SessionState>()((set) => ({
+  answers: {},
+  record: (questionId, correct) => set((s) => ({ answers: { ...s.answers, [questionId]: correct } })),
+  reset: () => set({ answers: {} }),
+}))

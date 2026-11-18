@@ -1,156 +1,138 @@
 import { Link } from 'react-router-dom'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import {
-  Baby, Syringe, Bug, Heart, Droplets,
-  ThermometerSun, Stethoscope, ClipboardList, BookOpen
-} from 'lucide-react'
+import { ArrowRight, Calculator, ClipboardList, Layers, ListChecks, Sparkles } from 'lucide-react'
+import { modules } from '@/content/modules'
+import { questions } from '@/content/questions'
+import { clinicalCases } from '@/content/cases'
+import { flashcards } from '@/content/flashcards'
+import { references } from '@/content/references'
+import { CONTENT_REVIEWED } from '@/content/meta'
 
-const modules = [
-  {
-    title: 'Development & Milestones',
-    description: 'Track developmental milestones, growth patterns, and identify red flags across ages',
-    icon: Baby,
-    path: '/development',
-    color: 'text-blue-500',
-  },
-  {
-    title: 'Vaccination Schedules',
-    description: 'Interactive ACIP vaccine timeline, catch-up rules, and contraindications',
-    icon: Syringe,
-    path: '/vaccines',
-    color: 'text-green-500',
-  },
-  {
-    title: 'Common Infections',
-    description: 'Decision trees for otitis media, bronchiolitis, croup, pneumonia, and more',
-    icon: Bug,
-    path: '/infections',
-    color: 'text-red-500',
-  },
-  {
-    title: 'Congenital Disorders',
-    description: 'Cardiac defects, genetic syndromes, metabolic disorders, and TORCH infections',
-    icon: Heart,
-    path: '/congenital',
-    color: 'text-pink-500',
-  },
-  {
-    title: 'Acute Care',
-    description: 'Pediatric dosing principles and acute care fundamentals',
-    icon: Stethoscope,
-    path: '/acute-care',
-    color: 'text-purple-500',
-  },
-  {
-    title: 'Dehydration Assessment',
-    description: 'Classify severity and create rehydration plans for pediatric patients',
-    icon: Droplets,
-    path: '/dehydration',
-    color: 'text-cyan-500',
-  },
-  {
-    title: 'Febrile Seizures',
-    description: 'Simple vs complex classification, management, and parent counseling',
-    icon: ThermometerSun,
-    path: '/febrile-seizure',
-    color: 'text-orange-500',
-  },
-  {
-    title: 'Clinical Cases',
-    description: 'Practice case-based reasoning with synthetic pediatric vignettes',
-    icon: ClipboardList,
-    path: '/cases',
-    color: 'text-indigo-500',
-  },
-  {
-    title: 'Assessment & Quizzes',
-    description: 'Test your knowledge with MCQs, matching, and case scenarios',
-    icon: BookOpen,
-    path: '/assessment',
-    color: 'text-yellow-500',
-  },
+const updates: { text: string; to: string }[] = [
+  { text: 'U.S. measles elimination lost (Nov 2026): recognition, isolation, vitamin A and post-exposure prophylaxis.', to: '/vaccines#measles' },
+  { text: 'AAP 2026 immunization schedule vs. contested federal changes — what to follow and why.', to: '/vaccines' },
+  { text: 'RSV 2026–27: nirsevimab or clesrovimab for every unprotected infant; palivizumab retired.', to: '/vaccines#rsv' },
+  { text: 'IDSA 2025: use Centor/McIsaac scores to decide who gets a strep test.', to: '/infections#pharyngitis' },
+  { text: 'Surviving Sepsis Campaign 2026 + Phoenix criteria for pediatric sepsis.', to: '/fever#sepsis' },
+  { text: 'Five days of amoxicillin for uncomplicated pneumonia (SCOUT-CAP, CAP-IT).', to: '/infections#pneumonia' },
+]
+
+const framework = [
+  ['Sick or not sick?', 'Pediatric Assessment Triangle from the doorway, before you touch the child.'],
+  ['How old — really?', 'Age (corrected for prematurity) sets the differential, normal vitals and decision thresholds (e.g., febrile infant bands).'],
+  ['Vitals against age norms', 'Tachycardia and slow capillary refill come long before hypotension.'],
+  ['Immunization status', 'Missing Hib/PCV/MMR changes the risk of meningitis, epiglottitis and measles.'],
+  ['Hydration and feeding', 'Intake, output and weight trajectory are vital signs in infants.'],
+  ['Test only what changes management', 'Bronchiolitis, croup and simple febrile seizures need no routine tests.'],
+  ['Weight-based treatment, capped', 'mg/kg → mg → mL, never above the adult dose.'],
+  ['Safety-net and look again', 'Clear return precautions; if the story doesn’t fit the injury, consider abuse.'],
 ]
 
 export default function Home() {
+  const tools = modules.reduce((n, m) => n + m.tools.length, 0)
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-primary">
-          Welcome to Pediatrics Master
+    <div className="space-y-12">
+      <section className="space-y-5">
+        <p className="text-sm font-medium text-primary">Content checked against current guidance · {CONTENT_REVIEWED}</p>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          Learn pediatrics the way you’ll <span className="text-primary">practice it</span>.
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl">
-          An interactive pediatric learning platform covering development, vaccines,
-          infections, congenital disorders, and acute care fundamentals. Built for
-          medical students, residents, and healthcare professionals.
+        <p className="max-w-3xl text-lg text-muted-foreground">
+          Nine evidence-based modules, each with objectives, concise guideline-backed content, interactive bedside tools and built-in retrieval practice — then cases, a question bank and rapid-review cards to lock it in.
         </p>
-        <div className="flex gap-2 flex-wrap">
-          <Link to="/development">
-            <Button size="lg">Get Started</Button>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/growth" className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-6 font-medium text-primary-foreground hover:bg-primary/90">
+            Start Module 1 <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
-          <Link to="/assessment">
-            <Button size="lg" variant="outline">Take Assessment</Button>
+          <Link to="/assessment" className="inline-flex h-11 items-center rounded-md border px-6 font-medium hover:bg-accent">
+            Test yourself first
           </Link>
         </div>
-      </div>
-
-      {/* Educational Disclaimer */}
-      <div className="bg-muted/50 border border-border rounded-lg p-4">
         <p className="text-sm text-muted-foreground">
-          <strong>Educational purposes only.</strong> This platform uses synthetic examples
-          and guideline-based educational content. Always follow local protocols and consult
-          with supervising physicians for patient care decisions.
+          {tools} tools · {questions.length} questions · {clinicalCases.length} cases · {flashcards.length} cards · {references.length} cited sources
         </p>
-      </div>
+      </section>
 
-      {/* Module Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modules.map((module) => {
-          const Icon = module.icon
-          return (
-            <Link key={module.path} to={module.path}>
-              <Card className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg bg-accent ${module.color}`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-xl">{module.title}</CardTitle>
-                      <CardDescription className="mt-2">
-                        {module.description}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
+      <section className="rounded-xl border-2 border-primary/40 bg-primary/[0.04] p-5" aria-labelledby="updates-h">
+        <h2 id="updates-h" className="mb-3 flex items-center gap-2 text-lg font-semibold">
+          <Sparkles className="h-5 w-5 text-primary" aria-hidden /> What changed recently
+        </h2>
+        <ul className="grid gap-2 md:grid-cols-2">
+          {updates.map((u) => (
+            <li key={u.to + u.text}>
+              <Link to={u.to} className="flex items-start gap-2 rounded-md p-2 text-sm hover:bg-primary/10">
+                <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" aria-hidden />
+                <span>{u.text}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="path-h" className="space-y-4">
+        <h2 id="path-h" className="text-2xl font-semibold tracking-tight">
+          Learning path
+        </h2>
+        <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m) => {
+            const Icon = m.icon
+            const count = questions.filter((q) => q.module === m.id).length
+            return (
+              <li key={m.id}>
+                <Link to={m.path} className="flex h-full flex-col rounded-xl border bg-card p-5 transition-colors hover:border-primary">
+                  <span className="mb-3 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Module {m.number}</span>
+                  </span>
+                  <span className="text-lg font-semibold leading-snug">{m.title}</span>
+                  <span className="mt-2 flex-1 text-sm text-muted-foreground">{m.summary}</span>
+                  <span className="mt-4 text-xs text-muted-foreground">
+                    {m.tools.length} tools · {count} questions
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ol>
+      </section>
+
+      <section aria-labelledby="practice-h" className="space-y-4">
+        <h2 id="practice-h" className="text-2xl font-semibold tracking-tight">
+          Practice and apply
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { to: '/cases', icon: ClipboardList, title: 'Clinical cases', text: `${clinicalCases.length} stepwise synthetic patients` },
+            { to: '/assessment', icon: ListChecks, title: 'Question bank', text: 'By module, mixed exam, or review missed' },
+            { to: '/flashcards', icon: Layers, title: 'Rapid review', text: 'Numbers and rules for spaced recall' },
+            { to: '/tools', icon: Calculator, title: 'All tools', text: 'Every calculator in one place' },
+          ].map((x) => (
+            <Link key={x.to} to={x.to} className="rounded-xl border bg-card p-5 hover:border-primary">
+              <x.icon className="mb-2 h-6 w-6 text-primary" aria-hidden />
+              <span className="block font-semibold">{x.title}</span>
+              <span className="block text-sm text-muted-foreground">{x.text}</span>
             </Link>
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Learning Framework */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pediatric Reasoning Framework</CardTitle>
-          <CardDescription>
-            Universal approach to pediatric patient evaluation
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li>Identify age and developmental stage</li>
-            <li>Check vaccines due/overdue</li>
-            <li>Identify benign vs dangerous infections</li>
-            <li>Prioritize supportive care</li>
-            <li>Apply weight-based dosing</li>
-            <li>Assess and classify dehydration</li>
-            <li>Recognize red flags requiring ED or inpatient care</li>
-            <li>Consider congenital or structural causes when patterns persist</li>
-          </ol>
-        </CardContent>
-      </Card>
+      <section aria-labelledby="framework-h" className="space-y-4">
+        <h2 id="framework-h" className="text-2xl font-semibold tracking-tight">
+          An 8-step approach to any sick child
+        </h2>
+        <ol className="grid gap-3 md:grid-cols-2">
+          {framework.map(([title, text], i) => (
+            <li key={title} className="flex gap-3 rounded-lg border bg-card p-4">
+              <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">{i + 1}</span>
+              <span>
+                <span className="block font-semibold">{title}</span>
+                <span className="block text-sm text-muted-foreground">{text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </div>
   )
 }

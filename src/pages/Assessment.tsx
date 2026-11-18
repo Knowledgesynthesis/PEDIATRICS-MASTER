@@ -1,292 +1,251 @@
-import { useState } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowRight, RotateCcw, Shuffle, Target } from 'lucide-react'
+import { moduleById, modules } from '@/content/modules'
+import { questions } from '@/content/questions'
+import { PageHeader } from '@/components/learn/Blocks'
+import { Cite } from '@/components/learn/Cite'
+import { QuestionCard } from '@/components/learn/QuestionCard'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { assessmentQuestions } from '@/data/assessments'
-import { CheckCircle, XCircle, RotateCcw } from 'lucide-react'
+import { useSession } from '@/store/useStore'
+import { cn } from '@/lib/utils'
+import type { ModuleId, Question } from '@/types'
 
-export default function Assessment() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
-  const [showResult, setShowResult] = useState(false)
-  const [score, setScore] = useState(0)
-  const [answeredQuestions, setAnsweredQuestions] = useState(0)
-  const [quizComplete, setQuizComplete] = useState(false)
+type Mode = { kind: 'module'; module: ModuleId } | { kind: 'mixed' } | { kind: 'all' } | { kind: 'missed'; ids: string[] }
 
-  const categories = Array.from(new Set(assessmentQuestions.map((q) => q.category)))
-
-  const filteredQuestions = selectedCategory
-    ? assessmentQuestions.filter((q) => q.category === selectedCategory)
-    : assessmentQuestions
-
-  const currentQuestion = filteredQuestions[currentQuestionIndex]
-
-  const handleStartQuiz = (category: string | null) => {
-    setSelectedCategory(category)
-    setCurrentQuestionIndex(0)
-    setSelectedAnswer(null)
-    setShowResult(false)
-    setScore(0)
-    setAnsweredQuestions(0)
-    setQuizComplete(false)
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
+  return a
+}
 
-  const handleAnswer = (answerIndex: number) => {
-    if (showResult) return
-    setSelectedAnswer(answerIndex)
-    setShowResult(true)
-    setAnsweredQuestions(answeredQuestions + 1)
-
-    if (answerIndex === currentQuestion.correctAnswer) {
-      setScore(score + 1)
-    }
+function buildSet(mode: Mode): Question[] {
+  switch (mode.kind) {
+    case 'module':
+      return questions.filter((q) => q.module === mode.module)
+    case 'mixed':
+      return shuffle(questions).slice(0, 20)
+    case 'all':
+      return shuffle(questions)
+    case 'missed':
+      return questions.filter((q) => mode.ids.includes(q.id))
   }
+}
 
-  const handleNext = () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setSelectedAnswer(null)
-      setShowResult(false)
-    } else {
-      setQuizComplete(true)
-    }
-  }
+function modeLabel(mode: Mode): string {
+  if (mode.kind === 'module') return moduleById[mode.module].title
+  if (mode.kind === 'mixed') return 'Mixed exam (20 questions)'
+  if (mode.kind === 'all') return `Full bank (${questions.length} questions)`
+  return 'Review: questions missed this session'
+}
 
-  if (!selectedCategory) {
+function Runner({ mode, onExit, onRestart }: { mode: Mode; onExit: () => void; onRestart: (m: Mode) => void }) {
+  const set = useMemo(() => buildSet(mode), [mode])
+  const [idx, setIdx] = useState(0)
+  const [results, setResults] = useState<Record<string, boolean>>({})
+  const [finished, setFinished] = useState(false)
+  const q = set[idx]
+  const answered = q ? results[q.id] !== undefined : false
+  const correct = Object.values(results).filter(Boolean).length
+  const done = Object.keys(results).length
+
+  if (set.length === 0) {
     return (
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-primary mb-2">
-            Assessment & Quizzes
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Test your knowledge with MCQs and case-based questions
-          </p>
-        </div>
-
-        {/* Category Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card
-            className="cursor-pointer hover:bg-accent/50 transition-colors"
-            onClick={() => handleStartQuiz(null)}
-          >
-            <CardHeader>
-              <CardTitle>All Topics</CardTitle>
-              <CardDescription>
-                {assessmentQuestions.length} questions covering all pediatric topics
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          {categories.map((category) => {
-            const categoryQuestions = assessmentQuestions.filter((q) => q.category === category)
-            return (
-              <Card
-                key={category}
-                className="cursor-pointer hover:bg-accent/50 transition-colors"
-                onClick={() => handleStartQuiz(category)}
-              >
-                <CardHeader>
-                  <CardTitle className="capitalize">{category.replace('-', ' ')}</CardTitle>
-                  <CardDescription>
-                    {categoryQuestions.length} questions
-                  </CardDescription>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {categoryQuestions.filter((q) => q.type === 'mcq').length > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        MCQ: {categoryQuestions.filter((q) => q.type === 'mcq').length}
-                      </Badge>
-                    )}
-                    {categoryQuestions.filter((q) => q.type === 'case').length > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        Case: {categoryQuestions.filter((q) => q.type === 'case').length}
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-              </Card>
-            )
-          })}
-        </div>
+      <div className="space-y-4">
+        <p>No questions to show.</p>
+        <Button onClick={onExit}>Back</Button>
       </div>
     )
   }
 
-  if (quizComplete) {
-    const percentage = Math.round((score / filteredQuestions.length) * 100)
+  if (finished) {
+    const pct = Math.round((correct / set.length) * 100)
+    const missed = set.filter((x) => results[x.id] === false)
+    const byModule = modules
+      .map((m) => {
+        const qs = set.filter((x) => x.module === m.id)
+        const ok = qs.filter((x) => results[x.id]).length
+        return { m, total: qs.length, ok }
+      })
+      .filter((x) => x.total > 0)
     return (
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-4xl font-bold text-primary mb-2">Quiz Complete!</h1>
+      <div className="space-y-6">
+        <div className="rounded-xl border bg-card p-6 text-center">
+          <p className="text-sm text-muted-foreground">{modeLabel(mode)}</p>
+          <p className={cn('text-6xl font-bold', pct >= 80 ? 'text-emerald-600 dark:text-emerald-400' : pct >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400')}>{pct}%</p>
+          <p className="text-muted-foreground">
+            {correct} of {set.length} correct
+          </p>
+          <p className="mx-auto mt-3 max-w-md text-sm">{pct >= 80 ? 'Strong. Use mixed exams to keep it fresh.' : 'Review the explanations below, revisit the module sections, then retry the missed questions.'}</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {missed.length > 0 && (
+              <Button onClick={() => onRestart({ kind: 'missed', ids: missed.map((x) => x.id) })} className="gap-1">
+                <Target className="h-4 w-4" aria-hidden /> Retry {missed.length} missed
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => onRestart(mode)} className="gap-1">
+              <RotateCcw className="h-4 w-4" aria-hidden /> Retake
+            </Button>
+            <Button variant="outline" onClick={onExit}>
+              Choose another set
+            </Button>
+          </div>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Results</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <div className="text-6xl font-bold text-primary mb-2">{percentage}%</div>
-              <div className="text-xl text-muted-foreground">
-                {score} / {filteredQuestions.length} correct
-              </div>
+        {byModule.length > 1 && (
+          <div className="rounded-xl border bg-card p-4">
+            <p className="mb-3 font-semibold">By module</p>
+            <div className="space-y-2">
+              {byModule.map(({ m, total, ok }) => (
+                <div key={m.id} className="flex items-center gap-3 text-sm">
+                  <Link to={m.path} className="w-48 truncate hover:text-primary sm:w-64">
+                    {m.number}. {m.title}
+                  </Link>
+                  <div className="h-2 flex-1 rounded-full bg-muted">
+                    <div className="h-2 rounded-full bg-primary" style={{ width: `${(ok / total) * 100}%` }} />
+                  </div>
+                  <span className="w-12 text-right tabular-nums">
+                    {ok}/{total}
+                  </span>
+                </div>
+              ))}
             </div>
-
-            <div className="flex gap-4 justify-center">
-              <Button onClick={() => handleStartQuiz(selectedCategory)} className="gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Retake Quiz
-              </Button>
-              <Button variant="outline" onClick={() => setSelectedCategory(null)}>
-                Choose Different Topic
-              </Button>
-            </div>
-
-            {percentage >= 80 && (
-              <div className="bg-green-500/10 border border-green-500 p-4 rounded-lg text-center">
-                <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-2" />
-                <p className="font-semibold">Excellent Work!</p>
-                <p className="text-sm text-muted-foreground">
-                  You have a strong understanding of this topic.
+          </div>
+        )}
+        {missed.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold">Review what you missed</h2>
+            {missed.map((x) => (
+              <div key={x.id} className="rounded-lg border bg-card p-4 text-sm">
+                <p className="font-medium">{x.stem}</p>
+                <p className="mt-2">
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">Answer:</span> {x.options[x.answer]}
                 </p>
+                <p className="mt-1 text-muted-foreground">{x.explanation}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <Cite ids={x.refs} />
+                  <Link to={moduleById[x.module].path} className="text-xs font-medium text-primary hover:underline">
+                    Open module →
+                  </Link>
+                </div>
               </div>
-            )}
-
-            {percentage >= 60 && percentage < 80 && (
-              <div className="bg-yellow-500/10 border border-yellow-500 p-4 rounded-lg text-center">
-                <p className="font-semibold">Good Effort!</p>
-                <p className="text-sm text-muted-foreground">
-                  Review the topics you missed and try again.
-                </p>
-              </div>
-            )}
-
-            {percentage < 60 && (
-              <div className="bg-red-500/10 border border-red-500 p-4 rounded-lg text-center">
-                <p className="font-semibold">Keep Studying!</p>
-                <p className="text-sm text-muted-foreground">
-                  Review the learning materials and retake the quiz.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-primary mb-2">Assessment</h1>
-          <p className="text-lg text-muted-foreground capitalize">
-            {selectedCategory ? selectedCategory.replace('-', ' ') : 'All Topics'}
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => setSelectedCategory(null)}>
-          ← Change Topic
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-semibold">{modeLabel(mode)}</p>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          Exit
         </Button>
       </div>
+      <div>
+        <div className="mb-1 flex justify-between text-xs text-muted-foreground">
+          <span>
+            Question {idx + 1} of {set.length}
+          </span>
+          <span className="tabular-nums">
+            {correct}/{done} correct
+          </span>
+        </div>
+        <div className="h-2 rounded-full bg-muted" role="progressbar" aria-valuemin={0} aria-valuemax={set.length} aria-valuenow={idx + 1} aria-label="Progress">
+          <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${((idx + 1) / set.length) * 100}%` }} />
+        </div>
+      </div>
+      <QuestionCard key={q.id} question={q} heading={moduleById[q.module].title} onAnswered={(ok) => setResults((r) => ({ ...r, [q.id]: ok }))} />
+      {answered && (
+        <Button onClick={() => (idx < set.length - 1 ? setIdx(idx + 1) : setFinished(true))} className="w-full gap-1 sm:w-auto">
+          {idx < set.length - 1 ? 'Next question' : 'See results'} <ArrowRight className="h-4 w-4" aria-hidden />
+        </Button>
+      )}
+    </div>
+  )
+}
 
-      {/* Progress */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {filteredQuestions.length}
-            </span>
-            <span className="text-sm font-semibold">
-              Score: {score} / {answeredQuestions}
-              {answeredQuestions > 0 && ` (${Math.round((score / answeredQuestions) * 100)}%)`}
-            </span>
-          </div>
-          <div className="w-full bg-secondary rounded-full h-2">
-            <div
-              className="bg-primary h-2 rounded-full transition-all"
-              style={{
-                width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%`,
-              }}
-            />
-          </div>
-        </CardContent>
-      </Card>
+export default function Assessment() {
+  const [params, setParams] = useSearchParams()
+  const [mode, setMode] = useState<Mode | null>(null)
+  const [runKey, setRunKey] = useState(0)
+  const answers = useSession((s) => s.answers)
+  const missedIds = questions.filter((q) => answers[q.id] === false).map((q) => q.id)
+  const answeredCount = questions.filter((q) => answers[q.id] !== undefined).length
 
-      {/* Question */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary">{currentQuestion.type.toUpperCase()}</Badge>
-            <Badge variant="outline" className="capitalize">
-              {currentQuestion.category.replace('-', ' ')}
-            </Badge>
-          </div>
-          <CardTitle className="text-xl">{currentQuestion.question}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            {currentQuestion.options?.map((option, idx) => {
-              const isSelected = selectedAnswer === idx
-              const isCorrect = idx === currentQuestion.correctAnswer
-              const showColors = showResult
+  useEffect(() => {
+    const m = params.get('module') as ModuleId | null
+    if (m && moduleById[m]) setMode({ kind: 'module', module: m })
+  }, [params])
 
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleAnswer(idx)}
-                  disabled={showResult}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
-                    showColors && isCorrect
-                      ? 'border-green-500 bg-green-500/10'
-                      : showColors && isSelected && !isCorrect
-                      ? 'border-red-500 bg-red-500/10'
-                      : isSelected
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:bg-accent'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">{option}</span>
-                    {showColors && isCorrect && (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    )}
-                    {showColors && isSelected && !isCorrect && (
-                      <XCircle className="h-5 w-5 text-red-500" />
-                    )}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+  const start = (m: Mode) => {
+    setMode(m)
+    setRunKey((k) => k + 1)
+  }
+  const exit = () => {
+    setMode(null)
+    if (params.has('module')) setParams({}, { replace: true })
+  }
 
-          {showResult && (
-            <div className="bg-accent p-4 rounded-lg space-y-3">
-              <div className="flex items-start gap-2">
-                {selectedAnswer === currentQuestion.correctAnswer ? (
-                  <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <h3 className="font-semibold mb-2">
-                    {selectedAnswer === currentQuestion.correctAnswer ? 'Correct!' : 'Incorrect'}
-                  </h3>
-                  <p className="text-sm">{currentQuestion.rationale}</p>
-                </div>
-              </div>
+  if (mode) return <Runner key={runKey} mode={mode} onExit={exit} onRestart={start} />
 
-              <Button onClick={handleNext} className="w-full">
-                {currentQuestionIndex < filteredQuestions.length - 1
-                  ? 'Next Question →'
-                  : 'View Results'}
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Question bank"
+        summary={`${questions.length} board-style questions. Every explanation says why the answer is right and why the tempting options are wrong, with the source. Answer order is shuffled.`}
+      />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <button type="button" onClick={() => start({ kind: 'mixed' })} className="rounded-xl border-2 border-primary bg-primary/10 p-5 text-left hover:bg-primary/15">
+          <Shuffle className="mb-2 h-6 w-6 text-primary" aria-hidden />
+          <span className="block font-semibold">Mixed exam</span>
+          <span className="block text-sm text-muted-foreground">20 random questions across all modules — interleaving builds durable recall.</span>
+        </button>
+        <button type="button" onClick={() => start({ kind: 'all' })} className="rounded-xl border bg-card p-5 text-left hover:border-primary">
+          <span className="block font-semibold">Full bank</span>
+          <span className="block text-sm text-muted-foreground">All {questions.length} questions, shuffled.</span>
+        </button>
+        <button
+          type="button"
+          disabled={missedIds.length === 0}
+          onClick={() => start({ kind: 'missed', ids: missedIds })}
+          className="rounded-xl border bg-card p-5 text-left enabled:hover:border-primary disabled:opacity-50"
+        >
+          <Target className="mb-2 h-6 w-6 text-rose-500" aria-hidden />
+          <span className="block font-semibold">Review missed ({missedIds.length})</span>
+          <span className="block text-sm text-muted-foreground">
+            {answeredCount ? `${answeredCount} answered this session (including quick checks).` : 'Questions you miss this session collect here.'}
+          </span>
+        </button>
+      </div>
+      <div>
+        <h2 className="mb-3 text-lg font-semibold">By module</h2>
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m) => {
+            const qs = questions.filter((q) => q.module === m.id)
+            const done = qs.filter((q) => answers[q.id] !== undefined).length
+            const Icon = m.icon
+            return (
+              <button key={m.id} type="button" onClick={() => start({ kind: 'module', module: m.id })} className="flex items-start gap-3 rounded-xl border bg-card p-4 text-left hover:border-primary">
+                <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" aria-hidden />
+                <span>
+                  <span className="block font-semibold">
+                    {m.number}. {m.title}
+                  </span>
+                  <span className="block text-sm text-muted-foreground">
+                    {qs.length} questions{done ? ` · ${done} answered this session` : ''}
+                  </span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">Answers are kept only for this browser session and are not saved.</p>
     </div>
   )
 }
