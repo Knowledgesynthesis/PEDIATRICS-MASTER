@@ -547,6 +547,13 @@ export const references: Reference[] = [
     kind: 'guideline',
   },
   {
+    id: 'nice-ivf',
+    short: 'NICE NG29',
+    citation: 'National Institute for Health and Care Excellence. Intravenous fluid therapy in children and young people in hospital (NG29). London: NICE; 2015, updated 2020.',
+    url: 'https://www.nice.org.uk/guidance/ng29',
+    kind: 'guideline',
+  },
+  {
     id: 'cds-2004',
     short: 'Clinical Dehydration Scale',
     citation:
@@ -693,6 +700,14 @@ export const references: Reference[] = [
     citation:
       'US FDA approval of epinephrine nasal spray (neffy) 2 mg for patients ≥30 kg (Aug 2024) and 1 mg for children 4 years and older weighing 15 to <30 kg (Mar 2025).',
     kind: 'policy',
+  },
+  {
+    id: 'aap-abuse-2015',
+    short: 'AAP physical abuse 2015',
+    citation:
+      'Christian CW; Committee on Child Abuse and Neglect. The Evaluation of Suspected Child Physical Abuse. Pediatrics. 2015;135(5):e1337-e1354.',
+    url: 'https://doi.org/10.1542/peds.2015-0356',
+    kind: 'guideline',
   },
   {
     id: 'ten4-2021',
