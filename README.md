@@ -61,7 +61,7 @@ src/
 
 ### Deployment
 
-The app is a single-page app using `BrowserRouter`. Configure the static host to serve `index.html` for unknown paths (SPA fallback). After the first load, the service worker serves every route offline.
+Deployed on Vercel from `main`. `vercel.json` provides the SPA fallback (unknown paths → `index.html`) and keeps `sw.js` uncached so updates roll out. On other static hosts, add an equivalent rewrite. After the first load, the service worker serves every route offline.
 
 ---
 
