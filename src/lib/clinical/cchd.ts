@@ -1,27 +1,36 @@
 /**
- * Critical congenital heart disease pulse-oximetry screening — updated AAP-endorsed algorithm
- * (Martin et al., Pediatrics 2020). Screen at ≥24 h of age; right hand (pre-ductal) and either foot.
+ * AAP 2025 CCHD pulse-oximetry screening algorithm (Oster et al., Fig. 1).
+ * Measurements come from the right hand (preductal) and either foot (postductal).
  */
-
 export type CchdResult = 'pass' | 'repeat' | 'fail'
 
-export interface CchdOutcome {
-  result: CchdResult
-  difference: number
-  explanation: string
+export type CchdOutcome =
+  | { result: CchdResult; difference: number; explanation: string }
+  | { result: 'invalid'; difference: null; explanation: string }
+
+function validSaturation(value: number | null): value is number {
+  return value !== null && Number.isFinite(value) && value >= 0 && value <= 100
 }
 
-export function cchdScreen(rightHand: number, foot: number, attempt: 1 | 2): CchdOutcome {
+export function cchdScreen(rightHand: number | null, foot: number | null, attempt: 1 | 2): CchdOutcome {
+  if (!validSaturation(rightHand) || !validSaturation(foot)) {
+    return { result: 'invalid', difference: null, explanation: 'Enter both saturations from 0 to 100%.' }
+  }
+
   const difference = Math.abs(rightHand - foot)
   if (rightHand < 90 || foot < 90) {
-    return { result: 'fail', difference, explanation: 'SpO₂ <90% in the right hand or foot is an immediate fail.' }
+    return { result: 'fail', difference, explanation: 'SpO₂ below 90% at either site is an immediate fail. Do not repeat the screen.' }
   }
-  if ((rightHand >= 95 || foot >= 95) && difference <= 3) {
-    return { result: 'pass', difference, explanation: 'SpO₂ ≥95% in the right hand or foot with a difference ≤3% → pass.' }
+  if (rightHand >= 95 && foot >= 95 && difference <= 3) {
+    return { result: 'pass', difference, explanation: 'Both sites are at least 95%, and the absolute difference is no more than 3 percentage points.' }
   }
-  const why = difference > 3 ? `Difference ${difference}% (>3%)` : 'SpO₂ 90–94% in both right hand and foot'
+
+  const reasons: string[] = []
+  if (rightHand < 95 || foot < 95) reasons.push('at least one site is below 95%')
+  if (difference > 3) reasons.push('the absolute difference exceeds 3 percentage points')
+  const why = reasons.join(' and ')
   if (attempt === 1) {
-    return { result: 'repeat', difference, explanation: `${why} → repeat once in 1 hour.` }
+    return { result: 'repeat', difference, explanation: `Repeat both measurements once in 1 hour because ${why}.` }
   }
-  return { result: 'fail', difference, explanation: `${why} on the repeat screen → fail.` }
+  return { result: 'fail', difference, explanation: `The repeat does not meet the pass criteria because ${why}. Do not perform a third screen.` }
 }

@@ -268,14 +268,38 @@ describe('febrile seizure (AAP 2011/2008)', () => {
   })
 })
 
-describe('CCHD screen (2020 algorithm)', () => {
-  it('pass', () => expect(cchdScreen(97, 96, 1).result).toBe('pass'))
-  it('pass when only foot ≥95 and difference ≤3', () => expect(cchdScreen(94, 95, 1).result).toBe('pass'))
-  it('fail <90', () => expect(cchdScreen(89, 96, 1).result).toBe('fail'))
-  it('repeat when difference >3', () => expect(cchdScreen(98, 94, 1).result).toBe('repeat'))
-  it('repeat when 90–94 in both', () => expect(cchdScreen(93, 92, 1).result).toBe('repeat'))
-  it('fail on second abnormal screen', () => expect(cchdScreen(98, 94, 2).result).toBe('fail'))
-  it('difference of exactly 3 passes', () => expect(cchdScreen(98, 95, 1).result).toBe('pass'))
+describe('CCHD screen (AAP 2025, Figure 1)', () => {
+  it.each([[95, 95], [98, 95], [95, 98], [100, 100]])('passes %s/%s on either screen', (rightHand, foot) => {
+    expect(cchdScreen(rightHand, foot, 1).result).toBe('pass')
+    expect(cchdScreen(rightHand, foot, 2).result).toBe('pass')
+  })
+
+  it.each([[95, 94], [94, 95], [99, 95], [95, 99], [90, 93], [94, 94], [96, 92], [95, 94.9]])(
+    'repeats %s/%s once and fails if that is the repeat result',
+    (rightHand, foot) => {
+      expect(cchdScreen(rightHand, foot, 1).result).toBe('repeat')
+      expect(cchdScreen(rightHand, foot, 2).result).toBe('fail')
+    },
+  )
+
+  it.each([[89, 99], [99, 89], [0, 99], [96, 89.9]])('fails %s/%s immediately on either screen', (rightHand, foot) => {
+    expect(cchdScreen(rightHand, foot, 1).result).toBe('fail')
+    expect(cchdScreen(rightHand, foot, 2).result).toBe('fail')
+  })
+
+  it.each([null, Number.NaN, Number.POSITIVE_INFINITY, -1, 101])('rejects invalid %s at either site', (value) => {
+    expect(cchdScreen(value, 89, 1)).toMatchObject({ result: 'invalid', difference: null })
+    expect(cchdScreen(89, value, 2)).toMatchObject({ result: 'invalid', difference: null })
+  })
+
+  it('reports the reasons without inventing a large gradient', () => {
+    expect(cchdScreen(95, 94, 1)).toMatchObject({
+      result: 'repeat',
+      difference: 1,
+      explanation: 'Repeat both measurements once in 1 hour because at least one site is below 95%.',
+    })
+    expect(cchdScreen(99, 95, 2).explanation).toContain('the absolute difference exceeds 3 percentage points')
+  })
 })
 
 describe('bilirubin', () => {
