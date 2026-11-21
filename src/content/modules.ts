@@ -83,7 +83,7 @@ export const modules: ModuleMeta[] = [
       { id: 'tool-bili', label: 'Bilirubin rate of rise' },
     ],
     objectives: [
-      'Run and interpret the 2020 CCHD pulse-oximetry algorithm.',
+      'Run and interpret the AAP 2025 CCHD pulse-oximetry algorithm.',
       'Apply the AAP 2022 jaundice approach: risk factors, rate of rise, escalation of care.',
       'Tell innocent from pathologic murmurs; recognize duct-dependent lesions.',
       'Know health-supervision essentials for Down, Turner and 22q11.2 deletion syndromes.',

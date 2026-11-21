@@ -1,0 +1,51 @@
+name: Verify CCHD screening
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Install browser smoke runner
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cchd-smoke" --no-save --package-lock=false playwright@1.58.2
+          echo "PLAYWRIGHT_MODULE=$RUNNER_TEMP/cchd-smoke/node_modules/playwright/index.mjs" >> "$GITHUB_ENV"
+          if command -v google-chrome >/dev/null; then
+            echo "CHROMIUM_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            "$RUNNER_TEMP/cchd-smoke/node_modules/.bin/playwright" install --with-deps chromium
+          fi
+      - name: Smoke test the built site
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort &
+          for attempt in {1..15}; do
+            if curl -fsS http://127.0.0.1:4173/ -o /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/cchd-smoke.mjs
+      - name: Verify public Vercel after main deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          CCHD_BASE_URL: https://pediatrics-master.vercel.app
+          CCHD_LIVE_SMOKE: 'true'
+        run: |
+          for attempt in {1..24}; do
+            if node scripts/cchd-smoke.mjs; then exit 0; fi
+            echo "Vercel not verified yet (attempt $attempt/24)."
+            sleep 10
+          done
+          exit 1

@@ -12,25 +12,29 @@ import { num } from '@/lib/utils'
 const mod = moduleById.newborn
 
 function CchdTool() {
-  const [rh, setRh] = useState('97')
-  const [foot, setFoot] = useState('93')
+  const [firstRight, setFirstRight] = useState('95')
+  const [firstFoot, setFirstFoot] = useState('94')
+  const [repeatRight, setRepeatRight] = useState('')
+  const [repeatFoot, setRepeatFoot] = useState('')
   const [attempt, setAttempt] = useState<1 | 2>(1)
-  const r = num(rh)
-  const f = num(foot)
-  const valid = r !== null && f !== null && r >= 50 && r <= 100 && f >= 50 && f <= 100
-  const out = valid ? cchdScreen(r, f, attempt) : null
+  const isFirst = attempt === 1
+  const rightHand = isFirst ? firstRight : repeatRight
+  const foot = isFirst ? firstFoot : repeatFoot
+  const out = cchdScreen(num(rightHand), num(foot), attempt)
   return (
-    <ToolFrame id="tool-cchd" title="CCHD pulse-oximetry screen (2020 algorithm)" description="Screen at ≥24 h of age. Right hand = pre-ductal; foot = post-ductal." refs={['cchd-2020']}>
+    <ToolFrame id="tool-cchd" title="CCHD pulse-oximetry screen (AAP 2025)" description="Practice with a synthetic well newborn breathing room air. Use the right hand (preductal) and either foot (postductal)." refs={['cchd-2025']}>
       <div className="grid gap-4 sm:grid-cols-3">
-        <NumberField label="Right hand SpO₂" value={rh} onChange={setRh} unit="%" min={50} max={100} />
-        <NumberField label="Foot SpO₂" value={foot} onChange={setFoot} unit="%" min={50} max={100} />
-        <Segmented label="Screen" value={attempt} onChange={setAttempt} options={[{ value: 1, label: 'First' }, { value: 2, label: 'Repeat (1 h later)' }]} />
+        <NumberField label="Right hand SpO₂" value={rightHand} onChange={isFirst ? setFirstRight : setRepeatRight} unit="%" min={0} max={100} />
+        <NumberField label="Foot SpO₂" value={foot} onChange={isFirst ? setFirstFoot : setRepeatFoot} unit="%" min={0} max={100} />
+        <Segmented label="Screen" hint="Use new measurements for the repeat." value={attempt} onChange={setAttempt} options={[{ value: 1, label: 'First' }, { value: 2, label: 'Repeat (1 h later)' }]} />
       </div>
-      {out && (
+      {out.result === 'invalid' ? (
+        <div role="status"><p className="text-sm text-muted-foreground">{out.explanation}</p></div>
+      ) : (
         <Result tone={out.result === 'pass' ? 'good' : out.result === 'repeat' ? 'warn' : 'bad'} title={out.result === 'pass' ? 'PASS' : out.result === 'repeat' ? 'REPEAT in 1 hour' : 'FAIL'}>
           <p>{out.explanation}</p>
-          {out.result === 'fail' && <p>Evaluate for hypoxemia (infection, pulmonary disease). If no other cause, a diagnostic echocardiogram is required before discharge.</p>}
-          {out.result === 'pass' && <p>A pass does not exclude all heart disease (e.g., coarctation can be missed) — keep examining pulses and murmurs.</p>}
+          {out.result === 'fail' && <p>Notify the clinician and assess promptly for hypoxemia. If no reversible cause explains the result, obtain diagnostic echocardiography before discharge.</p>}
+          {out.result === 'pass' && <p>A pass does not rule out critical heart disease. Continue the newborn exam, including femoral pulses; coarctation can be missed.</p>}
         </Result>
       )}
     </ToolFrame>
@@ -95,7 +99,7 @@ function BiliTool() {
 export default function Congenital() {
   return (
     <div className="space-y-10">
-      <PageHeader module={mod} refs={['cchd-2020', 'aap-bili-2022', 'aap-down-2022', 'red-book']} />
+      <PageHeader module={mod} refs={['cchd-2025', 'aap-bili-2022', 'aap-down-2022', 'red-book']} />
       <OnThisPage
         items={[
           { id: 'screening', label: 'Newborn screening' },
@@ -132,7 +136,12 @@ export default function Congenital() {
         <QuickCheck question={getQuestion('nb-ch')} />
       </Section>
 
-      <Section id="cchd" title="Critical congenital heart disease screening" refs={['cchd-2020']}>
+      <Section id="cchd" title="Critical congenital heart disease screening" refs={['cchd-2025']}>
+        <Bullets items={[
+          'Screen a well-appearing newborn in room air at ≥24 hours, or as late as possible before discharge if going home sooner. Symptoms such as cyanosis, respiratory distress, or poor perfusion require immediate assessment, not a screening retest.',
+          'Pass requires ≥95% at both sites and an absolute difference of ≤3 percentage points. Either site <90% means immediate fail.',
+          'All other first results get one repeat of both sites in 1 hour. A repeat that does not pass is a fail.',
+        ]} />
         <CchdTool />
         <QuickCheck question={getQuestion('nb-cchd-repeat')} />
         <QuickCheck question={getQuestion('nb-cchd-fail')} />

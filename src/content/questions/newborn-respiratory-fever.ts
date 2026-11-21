@@ -4,12 +4,12 @@ export const newbornQuestions: Question[] = [
   {
     id: 'nb-cchd-repeat',
     module: 'newborn',
-    stem: 'At 26 hours of age, a well newborn’s pulse oximetry is 97% in the right hand and 93% in the foot. Next step?',
+    stem: 'At 26 hours of age, a well newborn’s pulse oximetry is 95% in the right hand and 94% in the foot. Next step?',
     options: ['Repeat the screen in 1 hour', 'Pass — no further action', 'Fail — order an echocardiogram now', 'Repeat at the 2-week visit'],
     answer: 0,
     explanation:
-      'The difference is 4% (>3%), so the screen is neither pass nor fail: repeat once in 1 hour (updated 2020 algorithm uses a single repeat). Pass requires ≥95% in the right hand or foot AND a difference ≤3%. Any value <90% is an immediate fail.',
-    refs: ['cchd-2020'],
+      'The 1-point difference is acceptable, but 94% at either site is below the pass threshold. AAP 2025 requires ≥95% at both sites and a difference of ≤3 percentage points. Neither value is below 90%, so repeat both sites once in 1 hour. A repeat that does not pass is a fail.',
+    refs: ['cchd-2025'],
   },
   {
     id: 'nb-cchd-fail',
@@ -19,7 +19,7 @@ export const newbornQuestions: Question[] = [
     answer: 0,
     explanation:
       'A failed screen requires evaluation for causes of hypoxemia; if none explains it, an echocardiogram is required before discharge. Critical lesions can deteriorate as the ductus closes.',
-    refs: ['cchd-2020'],
+    refs: ['cchd-2025'],
   },
   {
     id: 'nb-jaundice-24h',
@@ -74,7 +74,7 @@ export const newbornQuestions: Question[] = [
     answer: 0,
     explanation:
       'Shock with weak femoral pulses in the first week = ductal-dependent systemic flow (critical coarctation, HLHS, critical aortic stenosis) until proven otherwise. PGE1 reopens the ductus — start empirically; watch for apnea. Indomethacin would close the duct.',
-    refs: ['cchd-2020'],
+    refs: ['cchd-2025'],
   },
   {
     id: 'nb-ie',

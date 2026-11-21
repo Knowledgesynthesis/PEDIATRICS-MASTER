@@ -299,11 +299,11 @@ export default function Growth() {
         <QuickCheck question={getQuestion('gr-obesity-2023')} />
       </Section>
 
-      <Section id="preventive" title="Preventive care that changes outcomes" refs={['bright-futures']}>
+      <Section id="preventive" title="Preventive care that changes outcomes" refs={['bright-futures', 'cchd-2025']}>
         <DataTable
           head={['Age', 'Universal screening (Bright Futures)']}
           rows={[
-            ['Newborn', 'Metabolic/genetic screen (24–48 h), hearing (by 1 mo), CCHD pulse oximetry (≥24 h), bilirubin before discharge'],
+            ['Newborn', 'Metabolic/genetic screen (24–48 h), hearing (by 1 mo), CCHD pulse oximetry (≥24 h, or just before an earlier discharge), bilirubin before discharge'],
             ['1, 2, 4, 6 mo', 'Caregiver (perinatal) depression screening'],
             ['9, 18, 30 mo', 'Standardized developmental screening; autism screening at 18 and 24 mo'],
             ['12 mo', 'Hemoglobin/hematocrit; lead risk (blood lead at 12 and 24 mo for Medicaid/high risk)'],

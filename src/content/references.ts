@@ -235,11 +235,11 @@ export const references: Reference[] = [
     kind: 'resource',
   },
   {
-    id: 'cchd-2020',
-    short: 'CCHD screening 2020',
+    id: 'cchd-2025',
+    short: 'AAP CCHD screening 2025',
     citation:
-      'Martin GR, Ewer AK, Gaviglio A, et al. Updated Strategies for Pulse Oximetry Screening for Critical Congenital Heart Disease. Pediatrics. 2020;146(1):e20191650.',
-    url: 'https://doi.org/10.1542/peds.2019-1650',
+      'Oster ME, et al. Newborn Screening for Critical Congenital Heart Disease: A New Algorithm and Other Updated Recommendations: Clinical Report. Pediatrics. 2025;155(1):e2024069667.',
+    url: 'https://doi.org/10.1542/peds.2024-069667',
     kind: 'guideline',
   },
   {

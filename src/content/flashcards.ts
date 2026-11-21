@@ -35,7 +35,7 @@ export const flashcards: Flashcard[] = [
   { id: 'fc-vax-10', module: 'vaccines', front: 'Pertussis-vaccine contraindication', back: 'Encephalopathy within 7 days of a prior dose (give DT).' },
 
   // Newborn
-  { id: 'fc-nb-1', module: 'newborn', front: 'CCHD screen: pass criteria', back: 'SpO₂ ≥95% in right hand or foot AND difference ≤3%. <90% anywhere = fail. Otherwise repeat once in 1 h.' },
+  { id: 'fc-nb-1', module: 'newborn', front: 'CCHD screen: pass, repeat, and fail (AAP 2025)', back: 'Pass: ≥95% in BOTH right hand and either foot plus absolute difference ≤3 percentage points. Either site <90%: immediate fail. Otherwise repeat both sites once in 1 h; a repeat that does not pass is a fail.' },
   { id: 'fc-nb-2', module: 'newborn', front: 'Bilirubin rate of rise suggesting hemolysis', back: '≥0.3 mg/dL/h in the first 24 h; ≥0.2 mg/dL/h thereafter.' },
   { id: 'fc-nb-3', module: 'newborn', front: 'Escalation-of-care threshold (AAP 2022)', back: 'Exchange threshold − 2 mg/dL.' },
   { id: 'fc-nb-4', module: 'newborn', front: 'Neurotoxicity risk factors', back: 'GA <38 wk, albumin <3.0, isoimmune hemolysis/G6PD/other hemolysis, sepsis, instability in 24 h.' },

@@ -9,7 +9,7 @@ Content was checked against current guidance in **November 2026** (see `src/cont
 | | |
 |---|---|
 | **9 modules** | Growth & well-child care · Development · Immunizations · Newborn & congenital · Respiratory & ENT infections · Fever & serious infection · Fluids & dehydration · Febrile seizures · Emergencies & dosing |
-| **24 interactive tools** | e.g., AAP 2021 febrile-infant pathway, ACIP dose-validity checker, RSV protection decision, CCHD pulse-ox algorithm, bilirubin rate of rise, Westley score, AAP 2013 AOM decision, McIsaac score, Clinical Dehydration Scale, WHO plans A/B/C, ORT planner, Holliday–Segar, febrile-seizure classifier, PAT, vitals & resuscitation card, weight-based dose calculator (30+ drugs with per-dose maximums), status-epilepticus timer |
+| **24 interactive tools** | e.g., AAP 2021 febrile-infant pathway, ACIP dose-validity checker, RSV protection decision, AAP 2025 CCHD pulse-ox algorithm, bilirubin rate of rise, Westley score, AAP 2013 AOM decision, McIsaac score, Clinical Dehydration Scale, WHO plans A/B/C, ORT planner, Holliday–Segar, febrile-seizure classifier, PAT, vitals & resuscitation card, weight-based dose calculator (30+ drugs with per-dose maximums), status-epilepticus timer |
 | **97 questions** | Board-style; each explanation covers why the answer is right and why the distractors are wrong, with sources. Options are shuffled deterministically. |
 | **17 cases** | Stepwise synthetic patients where new information is revealed after each decision |
 | **72 review cards** | High-yield numbers and rules for spaced recall |
@@ -36,7 +36,7 @@ Learning design: objectives → content → quick check → tool → module quiz
 ```bash
 npm install
 npm run dev        # local dev server
-npm run test       # 104 unit + content-integrity tests
+npm run test       # unit + content-integrity tests
 npm run lint       # zero-warning ESLint
 npm run build      # type-check + production build (PWA)
 npm run check      # all of the above
@@ -56,7 +56,7 @@ src/
 
 ### Testing
 
-- `src/lib/clinical/*.test.ts`: boundary and guideline-example tests for every calculator (e.g., ACIP grace period, IPV final-dose rule, ondansetron weight-band edges, CCHD repeat logic, febrile-infant age bands).
+- `src/lib/clinical/*.test.ts`: boundary and guideline-example tests for every calculator (e.g., ACIP grace period, IPV final-dose rule, ondansetron weight-band edges, AAP 2025 CCHD pass, repeat, fail, and invalid-input boundaries, febrile-infant age bands).
 - `src/content/content.test.ts`: every quick check, citation and tool anchor resolves; no orphan references; questions are well formed; correct answers are balanced across display positions.
 
 ### Deployment
