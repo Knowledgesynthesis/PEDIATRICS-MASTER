@@ -5,6 +5,7 @@ import { Bullets, DataTable, ModuleFooter, OnThisPage, PageHeader, Panel, Sectio
 import { Callout } from '@/components/learn/Callout'
 import { NumberField, Result, Segmented, Toggle } from '@/components/learn/Controls'
 import { QuickCheck } from '@/components/learn/QuestionCard'
+import { UtiLab } from '@/components/learn/UtiLab'
 import { febrileInfantPathway, type Eligibility, type PathwayInput } from '@/lib/clinical/febrileInfant'
 import { num } from '@/lib/utils'
 
@@ -107,7 +108,7 @@ function FebrileInfantTool() {
 export default function Fever() {
   return (
     <div className="space-y-10">
-      <PageHeader module={mod} refs={['aap-febrile-infant-2021', 'aap-uti-2011', 'phoenix-2024', 'ssc-peds-2026', 'aha-kd-2024']} />
+      <PageHeader module={mod} refs={['aap-febrile-infant-2021', 'aap-uti-2026', 'phoenix-2024', 'ssc-peds-2026', 'aha-kd-2024']} />
       <OnThisPage
         items={[
           { id: 'basics', label: 'Fever basics' },
@@ -155,29 +156,42 @@ export default function Fever() {
         <QuickCheck question={getQuestion('fev-45d-low')} />
       </Section>
 
-      <Section id="uti" title="Febrile urinary tract infection (2–24 months)" refs={['aap-uti-2011', 'scout-uti-2023']}>
+      <Section id="uti" title="Pediatric urinary tract infection: AAP 2026" refs={['aap-uti-2026', 'aap-uti-diagnosis-2026', 'aap-uti-figures-2026']}>
+        <p>The 2026 guideline covers children from 8 days to 5 years; individual recommendations have specific age cutoffs. The lab anchors below are for children with low medical complexity and a compatible presentation.</p>
+        <Panel title="Get a usable specimen before antibiotics">
+          <Bullets items={[
+            'Consider UTI in a young child with fever without a source or an older child with dysuria, frequency, or new urgency. Evaluate promptly; do not wait in a sick child or one at higher risk.',
+            'Under 2 months: use catheter urine or suprapubic aspiration for culture. At 2–24 months, Figure 2 uses catheter urine for culture; if an initial bag or stimulated-void screen is positive, repeat UA and obtain culture by catheter. Beyond 24 months, Figure 3 uses clean catch when feasible or a catheter specimen. Never diagnose UTI from a bag culture.',
+          ]} />
+        </Panel>
+        <p className="text-sm text-muted-foreground">UA = urinalysis; LE = leukocyte esterase; WBC/hpf = white blood cells per high-powered field.</p>
+        <DataTable
+          head={['Age', 'While culture is pending', 'With a qualifying culture', 'Single uropathogen']}
+          rows={[
+            ['8 days to <2 months', '≥5 WBC/hpf or trace LE or higher', '≥5 WBC/hpf or trace LE or higher', '≥10,000 CFU/mL by catheter or suprapubic aspiration'],
+            ['2 months to 5 years', '≥10 WBC/hpf or 2+ LE or higher', '≥5 WBC/hpf or 1+ LE or higher', '≥10,000 CFU/mL by catheter; ≥100,000 CFU/mL by clean catch'],
+          ]}
+        />
+        <Callout tone="pearl" title="Collecting culture is not the same decision as starting antibiotics">
+          At age ≥2 months, 5–9 WBC/hpf or 1+ LE can warrant a properly collected culture without automatic empiric antibiotics. These are decision anchors, not rule-outs. Review clinical risk, specimen quality and antibiotic exposure; mixed growth usually suggests contamination, and growth alone without inflammation is not proof of UTI.
+        </Callout>
         <div className="grid gap-4 md:grid-cols-2">
-          <Panel title="Diagnose">
-            <Bullets
-              items={[
-                'If testing: catheterized (or suprapubic) specimen for UA + culture. Bag urine is acceptable only for screening UA — never for culture.',
-                'UTI = pyuria and/or bacteriuria on UA AND ≥50,000 CFU/mL of a single uropathogen.',
-                'A positive culture without pyuria is usually contamination or asymptomatic bacteriuria.',
-              ]}
-            />
+          <Panel title="Treat: age, severity, and response">
+            <Bullets items={[
+              'Days 8–28 inclusive with diagnosed UTI: start parenteral treatment; consider early oral transition after improvement. Over 28 days and under 5 years: favor oral therapy when tolerated and there is no other reason for admission. For infants 8–60 days, follow the separate febrile-infant pathway for invasive infection risk and disposition; UTI does not replace it.',
+              'KAS 2 conditionally suggests 5–7 days for low-risk febrile UTI at 2–24 months or older children with suspected pyelonephritis and no known urinary tract anomaly; 3–5 days for low-risk afebrile cystitis at age ≥2 years within guideline scope. Individualize for age <2 months, bacteremia, urinary tract anomalies or poor response.',
+              'Use local susceptibility data, then narrow or stop therapy when results and clinical reassessment support it. Nitrofurantoin is not appropriate for pyelonephritis.',
+            ]} />
           </Panel>
-          <Panel title="Treat and image">
-            <Bullets
-              items={[
-                'Oral antibiotics are as effective as IV in well-appearing infants ≥2 months; choose by local antibiogram (e.g., cephalexin, cefixime). Parenteral if ill or not tolerating PO.',
-                'Duration: AAP 2011 says 7–14 days; the SCOUT RCT (2023) supports 5 days in children who are improving — many pathways now use it.',
-                'Nitrofurantoin does not reach renal tissue — not for febrile UTI.',
-                'Renal–bladder ultrasound after the first febrile UTI; VCUG only if the ultrasound is abnormal, the course is atypical, or febrile UTI recurs.',
-                'Evaluate future fevers promptly (urine within 48 h).',
-              ]}
-            />
+          <Panel title="Image after a confirmed febrile UTI">
+            <Bullets items={[
+              'First febrile UTI before age 5: obtain renal and bladder ultrasound (RBUS) for structural abnormalities, typically after symptoms resolve, but sooner if urgent (e.g., suspected obstruction or severe/atypical illness). A normal RBUS does not rule out reflux.',
+              'Normal RBUS: no routine voiding cystourethrography (VCUG). Selected exceptions include age <1 month, non–E. coli, circumcised males, a complicated course, or unreliable follow-up.',
+              'Offer VCUG for clinically relevant RBUS abnormalities or a second febrile UTI at age <2 years; at age ≥2 years, offer after a second febrile UTI when no alternative risk factor explains it. Ask about constipation and bladder–bowel dysfunction in recurrent cases.',
+            ]} />
           </Panel>
         </div>
+        <UtiLab id="tool-uti-2026" />
         <QuickCheck question={getQuestion('fev-bag-urine')} />
         <QuickCheck question={getQuestion('fev-uti-imaging')} />
       </Section>

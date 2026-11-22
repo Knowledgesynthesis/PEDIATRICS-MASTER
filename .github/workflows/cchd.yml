@@ -1,4 +1,4 @@
-name: Verify CCHD screening
+name: Verify clinical learning tools
 
 on:
   pull_request:
@@ -37,14 +37,17 @@ jobs:
             sleep 1
           done
           node scripts/cchd-smoke.mjs
+          node scripts/uti-smoke.mjs
       - name: Verify public Vercel after main deploy
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           CCHD_BASE_URL: https://pediatrics-master.vercel.app
           CCHD_LIVE_SMOKE: 'true'
+          UTI_BASE_URL: https://pediatrics-master.vercel.app
+          UTI_LIVE_SMOKE: 'true'
         run: |
           for attempt in {1..24}; do
-            if node scripts/cchd-smoke.mjs; then exit 0; fi
+            if node scripts/cchd-smoke.mjs && node scripts/uti-smoke.mjs; then exit 0; fi
             echo "Vercel not verified yet (attempt $attempt/24)."
             sleep 10
           done

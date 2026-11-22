@@ -9,11 +9,11 @@ Content was checked against current guidance in **November 2026** (see `src/cont
 | | |
 |---|---|
 | **9 modules** | Growth & well-child care · Development · Immunizations · Newborn & congenital · Respiratory & ENT infections · Fever & serious infection · Fluids & dehydration · Febrile seizures · Emergencies & dosing |
-| **24 interactive tools** | e.g., AAP 2021 febrile-infant pathway, ACIP dose-validity checker, RSV protection decision, AAP 2025 CCHD pulse-ox algorithm, bilirubin rate of rise, Westley score, AAP 2013 AOM decision, McIsaac score, Clinical Dehydration Scale, WHO plans A/B/C, ORT planner, Holliday–Segar, febrile-seizure classifier, PAT, vitals & resuscitation card, weight-based dose calculator (30+ drugs with per-dose maximums), status-epilepticus timer |
+| **25 interactive tools** | e.g., AAP 2021 febrile-infant pathway, AAP 2026 pediatric UTI case lab, ACIP dose-validity checker, RSV protection decision, AAP 2025 CCHD pulse-ox algorithm, bilirubin rate of rise, Westley score, AAP 2013 AOM decision, McIsaac score, Clinical Dehydration Scale, WHO plans A/B/C, ORT planner, Holliday–Segar, febrile-seizure classifier, PAT, vitals & resuscitation card, weight-based dose calculator (30+ drugs with per-dose maximums), status-epilepticus timer |
 | **97 questions** | Board-style; each explanation covers why the answer is right and why the distractors are wrong, with sources. Options are shuffled deterministically. |
 | **17 cases** | Stepwise synthetic patients where new information is revealed after each decision |
 | **72 review cards** | High-yield numbers and rules for spaced recall |
-| **94 references** | Every recommendation links to its source (`/references`) |
+| **95 references** | Every recommendation links to its source (`/references`) |
 
 Learning design: objectives → content → quick check → tool → module quiz → cases → interleaved mixed exams and flashcards (retrieval practice, spacing, interleaving). Answers are kept in memory for the current session only. Nothing is persisted except the theme preference.
 
