@@ -13,10 +13,24 @@ try {
   const lesson = page.locator('#uti')
   const lab = lesson.locator('#tool-uti-2026')
   await lesson.getByRole('heading', { name: 'Pediatric urinary tract infection: AAP 2026' }).waitFor({ timeout: 8000 })
+  const anchorPosition = () => {
+    const section = document.getElementById('uti')
+    if (!section) return null
+    const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0
+    const margin = Number.parseFloat(getComputedStyle(section).scrollMarginTop) || 0
+    const actual = section.getBoundingClientRect().top
+    return { actual, expected: padding + margin, scrollY }
+  }
   await page.waitForFunction(() => {
-    const top = document.getElementById('uti')?.getBoundingClientRect().top
-    return top !== undefined && top >= 0 && top < 160
-  }, undefined, { timeout: 5000 })
+    const section = document.getElementById('uti')
+    if (!section) return false
+    const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0
+    const margin = Number.parseFloat(getComputedStyle(section).scrollMarginTop) || 0
+    return Math.abs(section.getBoundingClientRect().top - padding - margin) <= 2 && scrollY > 0
+  }, undefined, { timeout: 5000 }).catch(async (error) => {
+    console.error('UTI anchor position:', await page.evaluate(anchorPosition))
+    throw error
+  })
   await lab.getByRole('heading', { name: 'UTI case lab: same count, different specimen' }).waitFor()
   const status = lab.getByRole('status')
   const radio = (name) => lab.getByRole('radio', { name, exact: true })
