@@ -115,10 +115,13 @@ export const modules: ModuleMeta[] = [
     title: 'Fever & Serious Infection',
     summary: 'Febrile infants 8–60 days, UTI, meningitis, sepsis (Phoenix/SSC 2026), Kawasaki disease and measles.',
     icon: Thermometer,
-    tools: [{ id: 'tool-febrile-infant', label: 'Febrile infant pathway' }],
+    tools: [
+      { id: 'tool-febrile-infant', label: 'Febrile infant pathway' },
+      { id: 'tool-uti-2026', label: 'UTI case lab' },
+    ],
     objectives: [
       'Risk-stratify well-appearing febrile infants with the AAP 2021 pathway.',
-      'Diagnose and treat febrile UTI in 2–24-month-olds.',
+      'Interpret pediatric UTI tests by age and specimen; choose treatment and imaging using AAP 2026.',
       'Choose empiric meningitis therapy by age; time dexamethasone correctly.',
       'Recognize sepsis by Phoenix criteria and resuscitate per SSC 2026; diagnose Kawasaki and measles.',
     ],

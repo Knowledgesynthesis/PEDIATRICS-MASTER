@@ -335,22 +335,22 @@ export const feverQuestions: Question[] = [
   {
     id: 'fev-bag-urine',
     module: 'fever',
-    stem: 'A febrile 10-month-old has positive leukocyte esterase on a bag urine sample. Next step?',
-    options: ['Obtain a catheterized specimen for culture before antibiotics', 'Send the bag specimen for culture', 'Treat without culture', 'Repeat the bag sample'],
+    stem: 'A well-appearing febrile 10-month-old has 1+ leukocyte esterase on a bag screen and cannot provide clean-catch urine. Next step?',
+    options: ['Obtain catheter urine for repeat urinalysis and culture', 'Culture the bag urine', 'Diagnose UTI and treat based on the bag screen alone', 'Assume UTI is ruled out because leukocyte esterase is below 2+'],
     answer: 0,
     explanation:
-      'Bag specimens are acceptable for screening UA but not for culture (high contamination). Diagnose UTI with pyuria/bacteriuria AND ≥50,000 CFU/mL of a single uropathogen from a catheter or suprapubic specimen.',
-    refs: ['aap-uti-2011'],
+      'In this age group, 1+ leukocyte esterase can prompt catheter UA and culture; it is below the usual 2+ presumptive anchor by itself. A bag specimen is for screening only. With compatible illness and inflammation, ≥10,000 CFU/mL of a single catheter uropathogen meets the 2026 high-probability criteria.',
+    refs: ['aap-uti-2026', 'aap-uti-figures-2026'],
   },
   {
     id: 'fev-uti-imaging',
     module: 'fever',
-    stem: 'A 9-month-old recovered well from a first febrile UTI. Imaging?',
-    options: ['Renal and bladder ultrasound; VCUG only if ultrasound abnormal or UTI recurs', 'VCUG for all', 'DMSA scan for all', 'No imaging'],
+    stem: 'A 3-year-old recovers after a first uncomplicated febrile E. coli UTI. There are no special risk factors. Which imaging plan is best?',
+    options: ['Obtain renal and bladder ultrasound; if normal, no routine VCUG', 'Obtain VCUG regardless of the ultrasound findings', 'Obtain DMSA as the routine first study', 'No imaging because the child is older than 24 months'],
     answer: 0,
     explanation:
-      'AAP 2011 (reaffirmed 2016): renal–bladder ultrasound after the first febrile UTI at 2–24 months; VCUG is reserved for abnormal ultrasound, atypical/complex features, or recurrence.',
-    refs: ['aap-uti-2011'],
+      'AAP 2026 recommends renal and bladder ultrasound after the first febrile UTI before age 5 (KAS 4). With normal ultrasound and no special circumstances, skip routine VCUG (KAS 5A); offer it for clinically relevant ultrasound abnormalities (KAS 5B). Ultrasound does not rule out reflux.',
+    refs: ['aap-uti-2026'],
   },
   {
     id: 'fev-mening-empiric',

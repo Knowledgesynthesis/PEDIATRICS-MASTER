@@ -60,7 +60,7 @@ export const flashcards: Flashcard[] = [
   { id: 'fc-fev-1', module: 'fever', front: 'Abnormal inflammatory markers (AAP 2021)', back: 'PCT >0.5 ng/mL, ANC >4,000–5,200, CRP >20 mg/L, temp >38.5 °C (if no PCT).' },
   { id: 'fc-fev-2', module: 'fever', front: '8–21 days febrile, well', back: 'UA, blood culture, CSF; parenteral antibiotics; admit.' },
   { id: 'fc-fev-3', module: 'fever', front: '29–60 days, normal UA and IMs', back: 'No LP, no antibiotics, home with re-check in 24–36 h.' },
-  { id: 'fc-fev-4', module: 'fever', front: 'UTI culture threshold (catheter)', back: '≥50,000 CFU/mL single uropathogen + pyuria/bacteriuria.' },
+  { id: 'fc-fev-4', module: 'fever', front: 'AAP 2026 UTI: catheter vs clean-catch culture anchors', back: 'Compatible illness + inflammation + a single uropathogen: ≥10,000 CFU/mL by catheter (or suprapubic aspiration in infants <2 months); ≥100,000 CFU/mL by clean catch at ≥2 months within guideline scope. Bag culture cannot diagnose UTI.' },
   { id: 'fc-fev-5', module: 'fever', front: 'Empiric meningitis therapy >1 month', back: 'Vancomycin + ceftriaxone 100 mg/kg/day.' },
   { id: 'fc-fev-6', module: 'fever', front: 'Phoenix sepsis definition', back: 'Suspected infection + Phoenix score ≥2; shock = ≥1 cardiovascular point.' },
   { id: 'fc-fev-7', module: 'fever', front: 'Kawasaki criteria', back: 'Fever ≥5 days + ≥4 of: conjunctivitis, oral changes, rash, extremity changes, cervical node ≥1.5 cm.' },

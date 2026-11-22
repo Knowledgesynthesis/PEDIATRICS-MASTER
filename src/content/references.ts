@@ -471,19 +471,27 @@ export const references: Reference[] = [
     kind: 'trial',
   },
   {
-    id: 'aap-uti-2011',
-    short: 'AAP UTI 2011 (reaff. 2016)',
+    id: 'aap-uti-2026',
+    short: 'AAP UTI 2026',
     citation:
-      'Subcommittee on Urinary Tract Infection. Urinary Tract Infection: Clinical Practice Guideline for the Diagnosis and Management of the Initial UTI in Febrile Infants and Children 2 to 24 Months. Pediatrics. 2011;128(3):595-610. Reaffirmed 2016.',
-    url: 'https://doi.org/10.1542/peds.2011-1330',
+      'Alverson BK, Hains DS, Downs SM, et al. Clinical Practice Guideline for the Diagnosis and Treatment of Urinary Tract Infection in Children From 8 Days to 5 Years of Age. Pediatrics. 2026;158(4):e2026078565.',
+    url: 'https://doi.org/10.1542/peds.2026-078565',
     kind: 'guideline',
   },
   {
-    id: 'scout-uti-2023',
-    short: 'SCOUT (UTI) 2023',
+    id: 'aap-uti-diagnosis-2026',
+    short: 'AAP UTI diagnosis technical report',
     citation:
-      'Zaoutis T, Shaikh N, Fisher BT, et al. Short-Course Therapy for Urinary Tract Infections in Children: The SCOUT Randomized Clinical Trial. JAMA Pediatr. 2023;177(8):782-789.',
-    kind: 'trial',
+      'Forster CS, Nelson C, El Feghaly R, et al. Urinary Tract Infection Diagnosis: A Companion to the American Academy of Pediatrics’ 2026 Clinical Practice Guideline on the Diagnosis and Management of Urinary Tract Infection. Pediatrics. 2026;158(4):e2026078566.',
+    url: 'https://doi.org/10.1542/peds.2026-078566',
+    kind: 'review',
+  },
+  {
+    id: 'aap-uti-figures-2026',
+    short: 'AAP UTI algorithms',
+    citation: 'American Academy of Pediatrics. Algorithms for the Diagnosis and Treatment of Urinary Tract Infection in Children (Eight Days to Five Years of Age). Figures 1–4. 2026.',
+    url: 'https://www.aap.org/en/patient-care/urinary-tract-infection-clinical-practice-guideline/algorithms-for-the-diagnosis-and-treatment-of-urinary-tract-infection-in-children-eight-days-to-five-years-of-age/',
+    kind: 'resource',
   },
   {
     id: 'phoenix-2024',

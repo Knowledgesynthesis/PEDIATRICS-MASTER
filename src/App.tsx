@@ -26,10 +26,10 @@ function ScrollManager() {
   const { pathname, hash } = useLocation()
   useEffect(() => {
     if (hash) {
-      const id = decodeURIComponent(hash.slice(1))
-      // Wait a frame so lazily loaded pages can render their anchors.
-      const t = window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 60)
-      return () => window.clearTimeout(t)
+      let id = hash.slice(1)
+      try { id = decodeURIComponent(id) } catch { /* Leave malformed fragments as-is. */ }
+      const frame = window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }))
+      return () => window.cancelAnimationFrame(frame)
     }
     window.scrollTo(0, 0)
   }, [pathname, hash])
@@ -57,9 +57,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <ScrollManager />
       <Layout>
         <Suspense fallback={<PageFallback />}>
+          <ScrollManager />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/growth" element={<Growth />} />
